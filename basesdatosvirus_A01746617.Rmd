@@ -1,0 +1,237 @@
+---
+title: ""
+author: "Daniel Núñez"
+date: "4/16/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("seqinr")
+library("mgsub")
+```
+
+## Para elegir archivo FASTA a cargar
+```{r}
+archivo <- as.integer(readline(prompt = cat("Para elegir Zika presiona: 1 \nPara elegir SARS-COV presiona: 2 \nPara elegir SARS-COV2-WUHAN presiona: 3 \nPara elegir MERS-COV presiona: 4 \nPara elegir Dengue presiona: 5 \nPara elegir H1N1 segmento HA presiona: 6 \nPara elegir H1N1 segmento M1M2 presiona: 7 \nPara elegir H1N1 segmento NA presiona: 8 \nPara elegir H1N1 segmento NP presiona: 9 \nPara elegir H1N1 segmento NS1NEP presiona: 10 \nPara elegir H1N1 segmento PA presiona: 11 \nPara elegir H1N1 segmento PB1 presiona: 12 \nPara elegir H1N1 segmento PB2 presiona: 13 \n")))
+if (archivo == 1)
+{
+  zika <- read.fasta("ZIKA.fasta")
+  seq <- zika[[1]]
+  cat("Clasificación Baltimore 4")
+} else if (archivo == 2)
+{
+  sarsCov <- read.fasta("SARS-COV.fasta")
+  seq <- sarsCov[[1]]
+  cat("Clasificación Baltimore 4")
+} else if (archivo == 3)
+{
+  sarsCov2 <- read.fasta("SARS-COV2_WUHAN.fasta")
+  seq <- sarsCov2[[1]]
+  cat("Clasificación Baltimore 4")
+} else if (archivo == 4)
+{
+  merscov <- read.fasta("MERS.fasta")
+  seq <- merscov[[1]]
+  cat("Clasificación Baltimore 4")
+} else if (archivo == 5)
+{
+  dengue <- read.fasta("DENGUE.fasta")
+  seq <- dengue[[1]]
+  cat("Clasificación Baltimore 4")
+} else if (archivo == 6)
+{
+  influenza <- read.fasta("H1N1_HA.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 7)
+{
+  influenza <- read.fasta("H1N1_M1M2.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 8)
+{
+  influenza <- read.fasta("H1N1_NA.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 9)
+{
+  influenza <- read.fasta("H1N1_NP.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 10)
+{
+  influenza <- read.fasta("H1N1_NS1NEP.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 11)
+{
+  influenza <- read.fasta("H1N1_PA.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 12)
+{
+  influenza <- read.fasta("H1N1_PB1.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else if (archivo == 13)
+{
+  influenza <- read.fasta("H1N1_PB2.fasta")
+  seq <- influenza[[1]]
+  cat("Clasificación Baltimore 5")
+} else 
+{
+  cat("Error")
+}
+
+```
+
+```{r}
+dna2rna <- function(dna)
+{
+  rna <- mgsub(dna, c("a", "c", "g", "t"), c("u", "g", "c", "a"))
+  rna
+}
+```
+
+```{r}
+rna2dna <- function(rna)
+{
+  dna <- mgsub(rna, c("a", "c", "g", "u"), c("t", "g", "c", "a"))
+  dna
+}
+```
+
+## Ejercicio 1
+```{r}
+length(seq)
+```
+
+## Ejercicio 2
+```{r}
+percent <- function(dna)
+{
+  A <- sum(dna %in% c('a'))/length(dna)*100
+  T <- sum(dna %in% c('t'))/length(dna)*100
+  G <- sum(dna %in% c('g'))/length(dna)*100
+  C <- sum(dna %in% c('c'))/length(dna)*100
+  
+  cat("A", A, "%\nT", T, "%\nG", G, "%\nC", C, "%")
+}
+
+percent(seq)
+```
+
+## Ejercicio 3
+```{r}
+percent <- function(dna)
+{
+  G <- sum(dna %in% c('g'))/length(dna)*100
+  C <- sum(dna %in% c('c'))/length(dna)*100
+  
+  cat("'G + C'", G + C, "%")
+}
+
+percent(seq)
+```
+
+## Ejercicio 4
+```{r}
+compdna <- function(seq)
+{
+  complementario <- mgsub(seq, c("a", "c", "g", "t"), c("t", "g", "c", "a"))
+  complementario
+}
+
+compdna(seq)
+```
+
+```{r}
+comprna <- function(seq)
+{
+  complementario <- mgsub(seq, c("a", "c", "g", "u"), c("u", "g", "c", "a"))
+  complementario
+}
+
+comprna(seq)
+```
+
+## Ejercicio 5
+```{r}
+baltimore <- function(seq, type, sign)
+{
+  if (type == 1 && sign == 1)
+  {
+    dna2rna(comp(seq))
+    # dna positivo 5' 3', obtiene complementaria 3' 5', pasa a mrna 5' 3'
+  } else if (type == 1 && sign == -1)
+  {
+    dna2rna(seq)
+    # dna negativo 3' 5', pasa a mrna 5' 3' 
+  } else if (type == 2)
+  {
+    dna2rna(compdna(seq))
+    # dna positivo 5' 3', obtiene complementaria 3' 5', pasa a mrna 5' 3'
+  } else if (type == 3 && sign == 1)
+  {
+    seq
+    # rna positivo 5' 3', pasa directo a mrna 5' 3'
+  } else if (type == 3 && sign == -1)
+  {
+    comprna(seq)
+    # rna negativo 3' 5', obtiene complementaria a 5' 3'
+  } else if (type == 4)
+  {
+    seq
+    # rna positivo 5' 3', pasa directo a mrna 5' 3'
+  } else if (type == 5)
+  {
+    comprna(seq)
+    # rna negativo 3' 5', obtiene complementaria 5' 3'
+  } else if (type == 6)
+  {
+    dna2rna(compdna(compdna(rna2dna(seq))))
+    # rna positivo 5' 3', pasa a dna 3' 5', obtiene complementaria 5' 3', obtiene complementaria 3' 5', pasa a mrna 5' 3' 
+  } else if (type == 7 && sign == 1)
+  {
+    dna2rna(compdna(seq))
+    # dna positivo 5' 3', obtiene complementaria 3' 5', pasa a mrna 5' 3'
+  } else if (type == 7 && sign == -1)
+  {
+    dna2rna(compdna(compdna(seq)))
+    # dna negativo 3' 5', obtiene complementaria 5' 3', obtiene complementaria 3' 5', pasa a mrna 5' 3'
+  } else if (type == 1)
+  {
+    cat("Indica el signo!")
+  } else if (type == 3)
+  {
+    cat("Indica el signo!")
+  } else if (type == 7)
+  {
+    cat("Indica el signo!")
+  }
+}
+
+tipo <- as.integer(readline(prompt = cat("Dime el número de clase '1 - 7'\n")))
+if (tipo == 1 | tipo == 3 | tipo == 7)
+{
+  signo <- as.integer(readline(prompt = cat("Dime el signo. '+' = '1', '-' = '-1'\n")))
+  baltimore(seq, tipo, signo)
+} else if (tipo == 2 | tipo == 4 | tipo == 5 | tipo == 6)
+{
+  baltimore(seq, tipo)
+} else 
+{
+  cat("Error")
+}
+```
+
+
+
+
+
+
+
